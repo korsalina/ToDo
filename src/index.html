@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="css/style.min.css">
+    <title>ToDo</title></head>
+<body>
+<div class="container">
+    <div>
+        <h1>ToDo</h1>
+        <div class="heading">
+            <h2>Active:</h2>
+            <p id="activeCounter"></p>
+        </div>
+
+        <ul id="activeList"></ul>
+    </div>
+
+    <div>
+        <input type="text" id="taskInput">
+    </div>
+
+    <div>
+        <div class="heading">
+            <h2>Done:</h2>
+            <p id="doneCounter"></p>
+        </div>
+
+        <ul id="doneList"></ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const taskInput = document.getElementById("taskInput");
+        const activeList = document.getElementById("activeList");
+        const doneList = document.getElementById('doneList');
+
+        taskInput.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                let taskText = taskInput.value.trim();
+
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `
+                    <input type="checkbox" class="checkbox">
+                    <div contenteditable="true">${taskText}</div>
+                    <div class="deleteBtn">x</div>
+                `;
+
+                activeList.appendChild(listItem);
+                updateCounters();
+                taskInput.value = "";
+            }
+        });
+
+
+        const tasks = document.querySelectorAll('ul');
+        tasks.forEach(task => {
+            task.addEventListener('click', function (e) {
+                if (e.target.classList.contains('deleteBtn')) {
+                    e.target.parentNode.remove();
+                    updateCounters();
+                }
+            })
+        });
+
+        document.addEventListener('change', function(e) {
+            if (e.target.matches('input[type="checkbox"]')) {
+                const listItem = e.target.parentNode;
+
+
+                if (e.target.checked) {
+                    e.target.parentNode.remove();
+                    doneList.appendChild(listItem);
+                    updateCounters()
+
+                } else {
+                    e.target.parentNode.remove();
+                    activeList.appendChild(listItem);
+                    updateCounters()
+                }
+            }
+        });
+
+        function updateCounters() {
+            const activeCount = activeList.children.length;
+            const doneCount = doneList.children.length;
+            const sumCount = activeCount + doneCount;
+
+            document.getElementById('activeCounter').textContent = `${activeCount} / ${sumCount}`;
+            document.getElementById('doneCounter').textContent = `${doneCount} / ${sumCount}`;
+        }
+    })
+</script>
+</body>
+</html>

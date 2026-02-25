@@ -1,0 +1,43 @@
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+ul {
+  padding-left: 0;
+  list-style-type: none;
+}
+
+li {
+  display: grid;
+  grid-template-columns: 20px auto 10px;
+  border: 1px solid #8d8d8d;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+
+  .deleteBtn {
+    display: none;
+  }
+}
+
+li:hover .deleteBtn {
+  display: block;
+}
+
+#taskInput {
+  width: 100%;
+  border: 2px solid #673AB7;
+  border-radius: 10px;
+  padding: 10px;
+}
