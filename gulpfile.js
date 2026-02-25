@@ -22,31 +22,6 @@ gulp.task('server', function () {
     gulp.watch("src/js/**/*.js").on('change', browserSync.reload);
 });
 
-/*gulp.task('server', function () {
-    browserSync.init({
-        server: {
-            baseDir: "src/"
-        }
-    });
-
-    gulp.watch("src/!*.html").on('change', browserSync.reload)
-    gulp.watch("src/js/!*.js").on('change', browserSync.reload)
-});*/
-
-/*gulp.task('styles', function () {
-    return gulp.src("src/scss/!**!/!*.scss")
-        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-        .pipe(rename({
-            prefix: "", suffix: ".min",
-        }))
-        .pipe(autoprefixer({
-            cascade: false
-        }))
-        .pipe(cleanCSS({compatibility: 'ie8'}))
-        .pipe(gulp.dest("src/css"))
-        .pipe(browserSync.stream());
-});*/
-
 gulp.task('styles', function () {
     return gulp.src("src/scss/style.scss") // конкретный файл
         .pipe(sass().on('error', sass.logError))
@@ -69,7 +44,6 @@ gulp.task('watch', function () {
 
 gulp.task('html', function () {
     return gulp.src("src/*.html")
-        /*.pipe(htmlmin({collapseWhitespace: true}))*/
         .pipe(gulp.dest('src/'));
 });
 
