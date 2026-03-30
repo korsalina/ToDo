@@ -1,5 +1,14 @@
+function getElementById (el) {
+    return document.getElementById(el);
+}
+
+function setOnClickEvent (el, cb) {
+    const item = getElementById(el);
+    item.addEventListener('click', cb)
+    return item
+}
+
 const input = document.getElementById("taskInput");
-const addBtn = document.getElementById("addBtn");
 const list = document.getElementById("activeList");
 const template = document.getElementById("template");
 const taskInput = document.getElementById("taskInput");
@@ -7,16 +16,32 @@ const tasks = document.querySelectorAll('ul');
 const activeList = document.getElementById("activeList");
 const doneList = document.getElementById('doneList');
 
+const delAll = getElementById('deleteAll');
+const delActive = getElementById('deleteActiveList');
+const delDone = getElementById('deleteDoneList');
+
+const activeCounter = getElementById('activeCounter');
+const doneCounter = getElementById('doneCounter');
+
+delAll.addEventListener('click', () => {
+    localStorage.removeItem('tasks')
+    saveTasks();
+})
+
+const activeListItems = activeList.querySelectorAll('li')
+const doneListItems = doneList.querySelectorAll('li')
 
 function saveTasks() {
     const activeTasks = [];
     const doneTasks = [];
 
-    activeList.querySelectorAll('li').forEach(li => {
+    //не использовать мутиционные методы, приоритет !!!reduce
+    activeListItems.forEach(li => {
         activeTasks.push(li.querySelector('span').textContent);
     });
 
-    doneList.querySelectorAll('li').forEach(li => {
+    doneListItems.forEach(li => {
+        li.forEach()
         doneTasks.push(li.querySelector('span').textContent);
     });
 
@@ -24,6 +49,8 @@ function saveTasks() {
         active: activeTasks,
         done: doneTasks
     }));
+
+    updateCounters()
 }
 
 function loadTasks() {
@@ -54,6 +81,7 @@ function createNewTemplate(task) {
 }
 
 function isDuplicate(task) {
+
     const allTasks = document.querySelectorAll('li span');
 
     return Array.from(allTasks).some(span => {
@@ -65,6 +93,7 @@ function addTask () {
     const task = input.value.trim();
 
     if (task === "") {
+        // alert лучше не использовать
         alert ('Введите значение');
         return;
     }
@@ -76,14 +105,13 @@ function addTask () {
 
     createNewTemplate(task);
     input.value = "";
-    updateCounters();
     saveTasks();
 }
 
-addBtn.addEventListener("click", () => {
+setOnClickEvent('addBtn', () => {
     addTask();
     saveTasks();
-});
+})
 
 taskInput.addEventListener("keyup", function (event) {
     if (event.key === "Enter") {
@@ -122,13 +150,13 @@ document.addEventListener('dblclick', (e) => {
 
         input.replaceWith(span);
 
-        updateCounters()
         saveTasks()
     }
 
 
 })
 
+// на весь список а не на каждый элемент
 tasks.forEach(task => {
     task.addEventListener('click', function (e) {
         const deleteBtn = e.target.closest('.deleteBtn');
@@ -159,13 +187,11 @@ document.addEventListener('change', function (e) {
         if (e.target.checked) {
             e.target.parentNode.remove();
             doneList.appendChild(listItem);
-            updateCounters()
             saveTasks();
 
         } else {
             e.target.parentNode.remove();
             activeList.appendChild(listItem);
-            updateCounters()
             saveTasks();
         }
     }
@@ -176,18 +202,9 @@ function updateCounters() {
     const doneCount = doneList.children.length;
     const sumCount = activeCount + doneCount;
 
-    document.getElementById('activeCounter').textContent = `${activeCount} / ${sumCount}`;
-    document.getElementById('doneCounter').textContent = `${doneCount} / ${sumCount}`;
+    activeCounter.textContent = `${activeCount} / ${sumCount}`;
+    doneCounter.textContent = `${doneCount} / ${sumCount}`;
 }
-
-function deleteList() {
-    const element = document.querySelector("ul");
-    while (element.firstChild) {
-        element.removeChild(element.firstChild);
-    }
-    updateCounters();
-}
-
 
 
 loadTasks();
