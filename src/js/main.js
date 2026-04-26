@@ -24,33 +24,46 @@ const activeCounter = getElementById('activeCounter');
 const doneCounter = getElementById('doneCounter');
 
 delAll.addEventListener('click', () => {
-    localStorage.removeItem('tasks')
-    saveTasks();
+    activeList.innerHTML = '';
+    doneList.innerHTML = '';
+    localStorage.removeItem('tasks');
+    updateCounters();
 })
 
-const activeListItems = activeList.querySelectorAll('li')
-const doneListItems = doneList.querySelectorAll('li')
+delActive.addEventListener('click', () => {
+    activeList.innerHTML = '';
+    localStorage.removeItem('tasks');
+    updateCounters();
+})
+
+delDone.addEventListener('click', () => {
+    doneList.innerHTML = '';
+    localStorage.removeItem('tasks');
+    updateCounters();
+})
 
 function saveTasks() {
-    const activeTasks = [];
-    const doneTasks = [];
+    const activeListItems = activeList.querySelectorAll('li');
+    const doneListItems = doneList.querySelectorAll('li');
 
-    //не использовать мутиционные методы, приоритет !!!reduce
-    activeListItems.forEach(li => {
-        activeTasks.push(li.querySelector('span').textContent);
-    });
+    const activeTasks = Array.from(activeListItems).reduce((acc, li) => {
+        const text = li.querySelector('span').textContent;
+        acc.push(text);
+        return acc;
+    }, []);
 
-    doneListItems.forEach(li => {
-        li.forEach()
-        doneTasks.push(li.querySelector('span').textContent);
-    });
+    const doneTasks = Array.from(doneListItems).reduce((acc, li) => {
+        const text = li.querySelector('span').textContent;
+        acc.push(text);
+        return acc;
+    }, []);
 
     localStorage.setItem('tasks', JSON.stringify({
         active: activeTasks,
         done: doneTasks
     }));
 
-    updateCounters()
+    updateCounters();
 }
 
 function loadTasks() {
@@ -89,17 +102,23 @@ function isDuplicate(task) {
     });
 }
 
+function error () {
+    input.classList.add('taskInput--red')
+    setTimeout(() => {
+        input.classList.remove('taskInput--red');
+    }, 2000);
+}
+
 function addTask () {
     const task = input.value.trim();
 
     if (task === "") {
-        // alert лучше не использовать
-        alert ('Введите значение');
+        error ()
         return;
     }
 
     if (isDuplicate(task)) {
-        alert ('Такая задача уже есть');
+        error ()
         return;
     }
 
@@ -110,13 +129,11 @@ function addTask () {
 
 setOnClickEvent('addBtn', () => {
     addTask();
-    saveTasks();
 })
 
 taskInput.addEventListener("keyup", function (event) {
     if (event.key === "Enter") {
         addTask();
-        saveTasks();
     }
 })
 
@@ -156,9 +173,9 @@ document.addEventListener('dblclick', (e) => {
 
 })
 
-// на весь список а не на каждый элемент
-tasks.forEach(task => {
-    task.addEventListener('click', function (e) {
+
+tasks.forEach(taskList => {
+    taskList.addEventListener('click', function (e) {
         const deleteBtn = e.target.closest('.deleteBtn');
         if (deleteBtn) {
             const li = deleteBtn.closest('li');
@@ -174,10 +191,11 @@ tasks.forEach(task => {
             const text = li.querySelector('span').textContent;
 
             navigator.clipboard.writeText(text);
-            alert("Скопировано: " + text);
         }
-    })
+    });
 });
+
+
 
 
 document.addEventListener('change', function (e) {
@@ -205,6 +223,7 @@ function updateCounters() {
     activeCounter.textContent = `${activeCount} / ${sumCount}`;
     doneCounter.textContent = `${doneCount} / ${sumCount}`;
 }
+
 
 
 loadTasks();

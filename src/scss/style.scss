@@ -57,6 +57,17 @@ li {
   padding: 10px;
 }
 
+#taskInput:focus {
+  outline: none;
+  border: 2px solid #007bff;
+  transition: border 0.6s;
+}
+
+.taskInput--red {
+  border: 2px solid red !important;
+  transition: border 0.6s;
+}
+
 .input-field {
   margin-top: 50px;
   display: flex;
